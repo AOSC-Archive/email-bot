@@ -1,0 +1,15 @@
+{
+  "name": "packages-inspector-email",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "AOSC-Dev",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "imap": "^0.8.18",
+    "mailparser": "^0.6.1"
+  }
+}
