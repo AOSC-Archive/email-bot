@@ -10,5 +10,7 @@ const mailbox = new Mailbox(JSON.parse(conf))
 
 mailbox.connect((err) => {
   if (err) throw err
-  mailbox.fetch(sorting)
+  mailbox.fetch(sorting, () => {
+    mailbox.disconnect()
+  })
 })

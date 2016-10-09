@@ -17,7 +17,7 @@ module.exports = function Mailbox(opt) {
     this.imap.end()
   }
 
-  this.fetch = (cb) => {
+  this.fetch = (cb, complete) => {
     this.imap.openBox('INBOX', true, (err, box) => {
       if (err) throw err
       let f = this.imap.seq.fetch('1:*', {
@@ -29,11 +29,14 @@ module.exports = function Mailbox(opt) {
           stream.pipe(mailparser)
           mailparser.on('end', (mail) => {
             mail.seq = seqno
+            process.stdout.write("Received: " + seqno + "/" + box.messages.total + "\x1B[0G")
             if (typeof cb.exec === 'function')
               cb.exec(mail)
             else
               cb(null, mail)
+            if (seqno === box.messages.total) complete()
           })
+          mailparser.once('error', (err) => {})
         })
       })
       if (typeof cb === 'function')
