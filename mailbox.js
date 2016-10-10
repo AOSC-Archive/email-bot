@@ -29,7 +29,7 @@ module.exports = function Mailbox(opt) {
           stream.pipe(mailparser)
           mailparser.on('end', (mail) => {
             mail.seq = seqno
-            process.stdout.write("Received: " + seqno + "/" + box.messages.total + "\x1B[0G")
+            process.stdout.write(seqno + "/" + box.messages.total + "\x1B[0G")
             if (typeof cb.exec === 'function')
               cb.exec(mail)
             else
