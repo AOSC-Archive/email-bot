@@ -52,7 +52,8 @@
         mail.github.method = 'unknown+' + JSON.stringify(mail.github.arg)
     }
     switch (mail.github.type) {
-      case 'issues', 'issue':
+      case 'issues':
+      case 'issue':
         onIssue(mail)
         break
       case 'pull':
@@ -63,7 +64,7 @@
 
   caseFilter.all((mail, next) => {
     if (mail.github.type !== 'commit') return next()
-    mail.github.hash = mail.github.arg[0].split(',')[0]
+    mail.github.hash = mail.github.arg[0]
     onCommitComment(mail)
   })
 
@@ -72,20 +73,18 @@
   })
 
   function onRelease(mail) {
-    console.log(`#${mail.seq} \x1b[1;32mrelease \x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} ${mail.github.tag}`)
+    console.log(`#${mail.seq} \t\x1b[1;32mrelease \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.tag}`)
   }
 
   function onCommitComment(mail) {
-    console.log(`#${mail.seq} comment \x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} ${mail.github.title}`)
+    console.log(`#${mail.seq} \tcomment \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
   }
 
   function onIssue(mail) {
-    if (mail.github.method == 'new') console.log(mail.text);
-    console.log(`#${mail.seq} \x1b[${mail.github.method === 'new' ? 1 : 0};33missue   ${mail.github.method} \x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} ${mail.github.title}`)
+    console.log(`#${mail.seq} \t\x1b[${mail.github.method === 'new' ? 1 : 0};33missue ${mail.github.method} \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
   }
 
   function onPullRequest(mail) {
-    if (mail.github.method == 'issue_event') console.log(mail.text);
-    console.log(`#${mail.seq} \x1b[${mail.github.method === 'new' ? 1 : 0};34mpr      ${mail.github.method} \x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} ${mail.github.title}`)
+    console.log(`#${mail.seq} \t\x1b[${mail.github.method === 'new' ? 1 : 0};34mpull ${mail.github.method} \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
   }
 })()
