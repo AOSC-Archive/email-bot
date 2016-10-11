@@ -15,7 +15,12 @@
     mail.github.arg = a[2].split('/')
     const regexSubject = /(Re: \[.+?\] |\[.+?\] )(.*)/
     mail.github.title = mail.subject.match(regexSubject)[2]
+    mail.see()
     mainFilter.forward(caseFilter)(mail, next)
+  })
+
+  mainFilter.all((mail, next) => {
+    console.log(require('util').inspect(mail, { depth: null }))
   })
 
   caseFilter.all((mail, next) => {

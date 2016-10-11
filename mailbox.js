@@ -18,29 +18,46 @@ module.exports = function Mailbox(opt) {
   }
 
   this.fetch = (cb, complete) => {
-    this.imap.openBox('INBOX', true, (err, box) => {
+    this.imap.openBox('INBOX', false, (err, box) => {
       if (err) throw err
-      let f = this.imap.seq.fetch('1:*', {
-        bodies: ''
-      })
-      f.on('message', (msg, seqno) => {
-        msg.on('body', (stream, info) => {
-          const mailparser = new MailParser()
-          stream.pipe(mailparser)
-          mailparser.on('end', (mail) => {
-            mail.seq = seqno
-            process.stdout.write(seqno + "/" + box.messages.total + "\x1B[0G")
-            if (typeof cb.exec === 'function')
-              cb.exec(mail)
-            else
-              cb(null, mail)
-            if (seqno === box.messages.total) complete()
-          })
-          mailparser.once('error', (err) => {})
+      this.imap.search(['UNSEEN'], (err, results) => {
+        if (err) throw err
+        if (results.length === 0) return complete()
+        let f = this.imap.fetch(results, {
+          bodies: '',
         })
+        f.on('message', (msg, seqno) => {
+          const mailparser = new MailParser()
+          let stream = null
+          let attrs = null
+          msg.on('body', (_stream, info) => stream = _stream)
+          msg.on('attributes', (_attrs) => attrs = _attrs)
+          msg.on('end', () => {
+            stream.pipe(mailparser)
+            mailparser.once('error', (err) => {})
+            mailparser.on('end', (mail) => {
+              mail.attrs = attrs
+              mail.seq = attrs.uid
+              mail.see = () => {
+                this.imap.addFlags(mail.seq, '\\Seen', (err) => {
+                  if (err) throw err
+                })
+              }
+              mail.unsee = () => {
+                this.imap.delFlags(mail.seq, '\\Seen', (err) => {
+                  if (err) throw err
+                })
+              }
+              if (typeof cb.exec === 'function')
+                cb.exec(mail)
+              else
+                cb(null, mail)
+            })
+          })
+        })
+        f.once('end', complete)
+        if (typeof cb === 'function') f.once('error', cb)
       })
-      if (typeof cb === 'function')
-        f.once('error', cb)
     })
   }
 }
