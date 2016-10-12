@@ -69,18 +69,18 @@
   })
 
   function onRelease(mail) {
-    console.log(`#${mail.seq} \t\x1b[1;32mrelease \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.tag}`)
+    console.log(`${mail.date.toUTCString()} #${mail.seq} \t\x1b[1;32mrelease \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.tag}`)
   }
 
   function onCommitComment(mail) {
-    console.error(`#${mail.seq} \tcomment \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
+    console.error(`${mail.date.toUTCString()} #${mail.seq} \tcomment \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
   }
 
   function onIssue(mail) {
-    console.error(`#${mail.seq} \t\x1b[${mail.github.method === 'new' ? 1 : 0};33missue ${mail.github.method} \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
+    console.error(`${mail.date.toUTCString()} #${mail.seq} \t\x1b[${mail.github.method === 'new' ? 1 : 0};33missue ${mail.github.method} \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
   }
 
   function onPullRequest(mail) {
-    console.error(`#${mail.seq} \t\x1b[${mail.github.method === 'new' ? 1 : 0};34mpull ${mail.github.method} \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
+    console.error(`${mail.date.toUTCString()} #${mail.seq} \t\x1b[${mail.github.method === 'new' ? 1 : 0};34mpull ${mail.github.method} \t\x1b[1;37m${mail.github.repo}\x1b[0m@${mail.github.owner} \t${mail.github.title}`)
   }
 })()
