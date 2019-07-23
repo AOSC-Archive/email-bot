@@ -10,6 +10,6 @@
   "license": "GPL-3.0",
   "dependencies": {
     "imap": "^0.8.18",
-    "mailparser": "^0.6.1"
+    "mailparser": "^2.3.0"
   }
 }
